@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/SpicyChickenFLY/auto-mycnf/controller"
-	"github.com/SpicyChickenFLY/auto-mycnf/pkgs/middleware"
+	"github.com/SpicyChickenFLY/gin-frp/controller"
+	"github.com/SpicyChickenFLY/gin-frp/pkgs/middleware"
 	"github.com/gin-gonic/gin"
 
 	_ "github.com/go-sql-driver/mysql"

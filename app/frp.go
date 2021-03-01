@@ -8,15 +8,25 @@ import (
 
 const (
 	commonSectionName = "common"
-	cfgTag            = "ini"
+	cfgStructTag      = "ini"
+)
+
+const (
+	serviceTypeTag      = "type"
+	udpServiceTypeTag   = "tcp"
+	tcpServiceTypeTag   = "tcp"
+	stcpServiceTypeTag  = "stcp"
+	xtcpServiceTypeTag  = "xtcp"
+	httpServiceTypeTag  = "http"
+	httpsServiceTypeTag = "https"
 )
 
 var cfg *ini.File
 
-// ServiceConf is a service configure struct
-type ServiceConf struct {
+// ServiceBasicConf is a service configure struct
+type ServiceBasicConf struct {
 	Name string
-	Para map[string]string
+	Type string
 }
 
 // LoadConfFromFile load config from conf file
@@ -29,43 +39,35 @@ func LoadConfFromFile(filePath string) (err error) {
 }
 
 // AddFrpServiceConf add service config
-func AddFrpServiceConf(service interface{}) error {
-	reflectType := reflect.TypeOf(service)
+func AddFrpServiceConf(serviceStruct interface{}) error {
+	reflectType := reflect.TypeOf(serviceStruct)
 	serviceName := reflectType.Field(0).Name
 	sec, err := cfg.NewSection(serviceName)
 	if err != nil {
 		return err
 	}
 	for i := 1; i < reflectType.NumField(); i++ {
-		key := reflect.TypeOf(service).Field(i).Tag.Get(cfgTag)
-		val := reflect.ValueOf(service).Field(i).String()
+		key := reflect.TypeOf(serviceStruct).Field(i).Tag.Get(cfgStructTag)
+		val := reflect.ValueOf(serviceStruct).Field(i).String()
 		sec.NewKey(key, val)
 	}
 	return nil
 }
 
-// GetAllFrpServiceConf return all service config
-// FIXME
-func GetAllFrpServiceConf() (serviceConfs []*ServiceConf) {
+// GetAllFrpServiceConfTypeAndName return all service config
+// FIXME:
+func GetAllFrpServiceConfTypeAndName() (serviceBasicConfs []*ServiceBasicConf) {
 	for _, sec := range cfg.Sections() {
 		if sec.Name() == commonSectionName {
 			continue
 		}
-		para := make(map[string]string)
-		for _, key := range sec.Keys() {
-			para[key.Name()] = key.String()
-		}
-		serviceConfs = append(serviceConfs, &ServiceConf{
-			Name: sec.Name(),
-			Para: para,
-		})
+		serviceBasicConfs = append(serviceBasicConfs,
+			&ServiceBasicConf{
+				Name: sec.Name(),
+				Type: sec.Key(serviceTypeTag).String(),
+			})
 	}
-	return serviceConfs
-}
-
-// GetFrpServiceConfByType return specified config
-func GetFrpServiceConfByType(serviceType string) *ServiceConf {
-
+	return serviceBasicConfs
 }
 
 // GetFrpServiceConfByName return specified config
@@ -89,7 +91,7 @@ func UpdateFrpServiceConf(service interface{}) error {
 		return err
 	}
 	for i := 1; i < reflectType.NumField(); i++ {
-		key := reflect.TypeOf(service).Field(i).Tag.Get(cfgTag)
+		key := reflect.TypeOf(service).Field(i).Tag.Get(cfgStructTag)
 		val := reflect.ValueOf(service).Field(i).String()
 		sec.NewKey(key, val)
 	}
