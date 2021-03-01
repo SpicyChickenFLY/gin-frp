@@ -1,24 +1,24 @@
 package model
 
+const (
+	frpFilePluginName  = "static_file"
+	frpHTTPSPluginName = "https2http"
+)
+
 // ServerInfo is a frp server info struct
 type ServerInfo struct {
-	address string
-	port    int
-	token   string
-}
-
-// FrpCommonService is a general frp service struct
-type FrpCommonService struct {
-	Name string
-	Type string
+	Address string `ini:"server_addr"`
+	Port    int    `ini:"server_port"`
+	Token   string `ini:"token"`
 }
 
 // FrpTCPService is a tcp type frp service struct
 type FrpTCPService struct {
-	FrpCommonService
-	LocalIP   string
-	LocalPort int
-	SecretKey string
+	ServiceName string
+	ServiceType string `ini:"type"`
+	LocalIP     string `ini:"local_ip"`
+	LocalPort   int    `ini:"local_port"`
+	SecretKey   string `ini:"sk"`
 }
 
 // NewFrpTCPService initialize new FrpTCPService struct
@@ -26,87 +26,69 @@ func NewFrpTCPService(
 	name, serviceType string,
 	localIP string, localPort int, secretKey string) *FrpTCPService {
 	return &FrpTCPService{
-		FrpCommonService: FrpCommonService{
-			Name: name,
-			Type: serviceType,
-		},
-		LocalIP:   localIP,
-		LocalPort: localPort,
-		SecretKey: secretKey,
+		ServiceName: name,
+		ServiceType: serviceType,
+		LocalIP:     localIP,
+		LocalPort:   localPort,
+		SecretKey:   secretKey,
 	}
-}
-
-// FrpFilePlugin is a file frp plugin struct
-type FrpFilePlugin struct {
-	Name         string
-	LocalPath    string
-	StripPrefix  string
-	HTTPUser     string
-	HTTPPassword string
 }
 
 // FrpFileService is a file type frp service struct
 type FrpFileService struct {
-	FrpCommonService
-	FrpFilePlugin
-	RemotePort int
+	ServiceName  string
+	ServiceType  string `ini:"type"`
+	PluginName   string `ini:"plugin"`
+	LocalPath    string `ini:"plugin_local_path"`
+	StripPrefix  string `ini:"plugin_strip_prefix"`
+	HTTPUser     string `ini:"plugin_http_user"`
+	HTTPPassword string `ini:"plugin_http_passwd"`
+	RemotePort   int    `ini:"remote_port"`
 }
 
 // NewFrpFileService initialize new FrpFileService struct
 func NewFrpFileService(
 	serviceName, serviceType string,
-	pluginName, pluginPath, pluginPrefix, pluginUser, pluginPwd string,
+	pluginPath, pluginPrefix, pluginUser, pluginPwd string,
 	remotePort int) *FrpFileService {
 	return &FrpFileService{
-		FrpCommonService: FrpCommonService{
-			Name: serviceName,
-			Type: serviceType,
-		},
-		FrpFilePlugin: FrpFilePlugin{
-			Name:         pluginName,
-			LocalPath:    pluginPath,
-			StripPrefix:  pluginPrefix,
-			HTTPUser:     pluginUser,
-			HTTPPassword: pluginPwd,
-		},
-		RemotePort: remotePort,
+		ServiceName:  serviceName,
+		ServiceType:  serviceType,
+		PluginName:   frpFilePluginName,
+		LocalPath:    pluginPath,
+		StripPrefix:  pluginPrefix,
+		HTTPUser:     pluginUser,
+		HTTPPassword: pluginPwd,
+		RemotePort:   remotePort,
 	}
-}
-
-// FrpHTTPSPlugin is a https frp plugin struct
-type FrpHTTPSPlugin struct {
-	Name              string
-	LocalAddress      string
-	CertificatePath   string
-	KeyPath           string
-	HostHeaderRewrite string
-	HeaderXFromWhere  string
 }
 
 // FrpHTTPSService is a https type frp service struct
 type FrpHTTPSService struct {
-	FrpCommonService
-	FrpHTTPSPlugin
+	ServiceName       string
+	ServiceType       string `ini:"type"`
+	PluginName        string `ini:"plugin"`
+	LocalAddress      string `ini:"plugin_local_addr"`
+	CertificatePath   string `ini:"plugin_crt_path"`
+	KeyPath           string `ini:"plugin_key_path"`
+	HostHeaderRewrite string `ini:"plugin_host_header_rewrite"`
+	HeaderXFromWhere  string `ini:"plugin_header_X-From-Where"`
 }
 
 // NewFrpHTTPSService initialize new FrpHTTPSService struct
 func NewFrpHTTPSService(
 	serviceName, serviceType string,
-	pluginName, pluginAddr, pluginCrt, pluginKey,
+	pluginAddr, pluginCrt, pluginKey,
 	pluginRewrite, pluginWhere string,
 	remotePort int) *FrpHTTPSService {
 	return &FrpHTTPSService{
-		FrpCommonService: FrpCommonService{
-			Name: serviceName,
-			Type: serviceType,
-		},
-		FrpHTTPSPlugin: FrpHTTPSPlugin{
-			Name:              pluginName,
-			LocalAddress:      pluginAddr,
-			CertificatePath:   pluginCrt,
-			KeyPath:           pluginKey,
-			HostHeaderRewrite: pluginRewrite,
-			HeaderXFromWhere:  pluginWhere,
-		},
+		ServiceName:       serviceName,
+		ServiceType:       serviceType,
+		PluginName:        frpHTTPSPluginName,
+		LocalAddress:      pluginAddr,
+		CertificatePath:   pluginCrt,
+		KeyPath:           pluginKey,
+		HostHeaderRewrite: pluginRewrite,
+		HeaderXFromWhere:  pluginWhere,
 	}
 }

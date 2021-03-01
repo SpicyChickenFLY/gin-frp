@@ -1,9 +1,14 @@
 package app
 
-import "gopkg.in/ini.v1"
+import (
+	"reflect"
+
+	"gopkg.in/ini.v1"
+)
 
 const (
 	commonSectionName = "common"
+	cfgTag            = "ini"
 )
 
 var cfg *ini.File
@@ -19,6 +24,22 @@ func LoadConfFromFile(filePath string) (err error) {
 	cfg, err = ini.Load(filePath)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+// AddFrpServiceConf add service config
+func AddFrpServiceConf(service interface{}) error {
+	reflectType := reflect.TypeOf(service)
+	serviceName := reflectType.Field(0).Name
+	sec, err := cfg.NewSection(serviceName)
+	if err != nil {
+		return err
+	}
+	for i := 1; i < reflectType.NumField(); i++ {
+		key := reflect.TypeOf(service).Field(i).Tag.Get(cfgTag)
+		val := reflect.ValueOf(service).Field(i).String()
+		sec.NewKey(key, val)
 	}
 	return nil
 }
@@ -41,35 +62,15 @@ func GetAllFrpServiceConf() (serviceConfs []*ServiceConf) {
 	return serviceConfs
 }
 
-// GetFrpServiceConfByName return specified config
-func GetFrpServiceConfByName(secName string) (*ServiceConf, error) {
-	sec, err := cfg.GetSection(secName)
-	if err != nil {
-		return nil, err
-	}
-	para := make(map[string]string)
-	for _, key := range sec.Keys() {
-		para[key.Name()] = key.String()
-	}w
-	return &ServiceConf{
-		Name: sec.Name(),
-		Para: para,
-	}, nil
+// GetFrpServiceConfByType return specified config
+func GetFrpServiceConfByType(secName string) *ServiceConf {
+
 }
 
-// AddFrpServiceConf add service config
-func AddFrpServiceConf(secName string, kvMap map[string]string) error {
-	if err := cfg.NewSections(secName); err != nil {
-		return err
-	}
-	sec, err := cfg.GetSection(secName)
-	if err != nil {
-		return err
-	}
-	for key, val := range kvMap {
-		sec.NewKey(key, val)
-	}
-	return nil
+// GetFrpServiceConfByName return specified config
+func GetFrpServiceConfByName(
+	ServiceName string, serviceStruct interface{}) error {
+	return cfg.Section(ServiceName).MapTo(serviceStruct)
 }
 
 // DeleteFrpServiceConf delete service config by name
@@ -80,14 +81,5 @@ func DeleteFrpServiceConf(secName string) error {
 
 // UpdateFrpServiceConf delete service config by name
 func UpdateFrpServiceConf(secName string, kvMap map[string]string) error {
-	sec, err := cfg.GetSection(secName)
-	if err != nil {
-		return err
-	}
-	for key, val := range kvMap {
-		if sec.HasKey(key) {
-			sec.Key(key).SetValue(val)
-		}
-	}
-	return nil
+
 }
