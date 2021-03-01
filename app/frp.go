@@ -45,6 +45,7 @@ func AddFrpServiceConf(service interface{}) error {
 }
 
 // GetAllFrpServiceConf return all service config
+// FIXME
 func GetAllFrpServiceConf() (serviceConfs []*ServiceConf) {
 	for _, sec := range cfg.Sections() {
 		if sec.Name() == commonSectionName {
@@ -63,7 +64,7 @@ func GetAllFrpServiceConf() (serviceConfs []*ServiceConf) {
 }
 
 // GetFrpServiceConfByType return specified config
-func GetFrpServiceConfByType(secName string) *ServiceConf {
+func GetFrpServiceConfByType(serviceType string) *ServiceConf {
 
 }
 
@@ -80,6 +81,17 @@ func DeleteFrpServiceConf(secName string) error {
 }
 
 // UpdateFrpServiceConf delete service config by name
-func UpdateFrpServiceConf(secName string, kvMap map[string]string) error {
-
+func UpdateFrpServiceConf(service interface{}) error {
+	reflectType := reflect.TypeOf(service)
+	serviceName := reflectType.Field(0).Name
+	sec, err := cfg.GetSection(serviceName)
+	if err != nil {
+		return err
+	}
+	for i := 1; i < reflectType.NumField(); i++ {
+		key := reflect.TypeOf(service).Field(i).Tag.Get(cfgTag)
+		val := reflect.ValueOf(service).Field(i).String()
+		sec.NewKey(key, val)
+	}
+	return nil
 }
