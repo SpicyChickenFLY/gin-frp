@@ -7,18 +7,24 @@ const (
 
 // ServerInfo is a frp server info struct
 type ServerInfo struct {
-	Address string `ini:"server_addr"`
-	Port    int    `ini:"server_port"`
-	Token   string `ini:"token"`
+	Address string `ini:"server_addr" json:"Address"`
+	Port    int    `ini:"server_port" json:"Port"`
+	Token   string `ini:"token" json:"Token"`
+}
+
+// FrpBasicService is a service configure struct
+type FrpBasicService struct {
+	Name string `json:"ServiceName"`
+	Type string `ini:"type" json:"ServiceType"`
 }
 
 // FrpTCPService is a tcp type frp service struct
 type FrpTCPService struct {
-	ServiceName string
-	ServiceType string `ini:"type"`
-	LocalIP     string `ini:"local_ip"`
-	LocalPort   int    `ini:"local_port"`
-	SecretKey   string `ini:"sk"`
+	ServiceName string `json:"ServiceName"`
+	ServiceType string `ini:"type" json:"ServiceType"`
+	LocalIP     string `ini:"local_ip" json:"LocalIP"`
+	LocalPort   int    `ini:"local_port" json:"LocalPort"`
+	SecretKey   string `ini:"sk" json:"SecretKey"`
 }
 
 // NewFrpTCPService initialize new FrpTCPService struct
@@ -36,8 +42,8 @@ func NewFrpTCPService(
 
 // FrpFileService is a file type frp service struct
 type FrpFileService struct {
-	ServiceName  string
-	ServiceType  string `ini:"type"`
+	ServiceName  string `json:"ServiceName"`
+	ServiceType  string `ini:"type" json:"ServiceType"`
 	PluginName   string `ini:"plugin"`
 	LocalPath    string `ini:"plugin_local_path"`
 	StripPrefix  string `ini:"plugin_strip_prefix"`

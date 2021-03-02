@@ -10,31 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/SpicyChickenFLY/gin-frp/controller"
-	"github.com/SpicyChickenFLY/gin-frp/pkgs/middleware"
-	"github.com/gin-gonic/gin"
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	router := gin.Default()
-	router.Use(middleware.Cors())
-	router.Static("/static", "static")
-	router.LoadHTMLGlob("templates/*")
-
-	// Group: Todo List
-	groupCnf := router.Group("/mycnf")
-	{
-		groupParam := groupCnf.Group("/param")
-		{
-			groupParam.GET("/get", controller.GetCnf)
-		}
-		groupFile := groupCnf.Group("/file")
-		{
-			groupFile.POST("/gen", controller.GenFile)
-		}
-	}
 
 	server := &http.Server{
 		Addr:    ":8080",

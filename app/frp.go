@@ -3,31 +3,17 @@ package app
 import (
 	"reflect"
 
+	"github.com/SpicyChickenFLY/auto-mycnf/model"
 	"gopkg.in/ini.v1"
 )
 
 const (
 	commonSectionName = "common"
+	serviceTypeTag    = "type"
 	cfgStructTag      = "ini"
 )
 
-const (
-	serviceTypeTag      = "type"
-	udpServiceTypeTag   = "tcp"
-	tcpServiceTypeTag   = "tcp"
-	stcpServiceTypeTag  = "stcp"
-	xtcpServiceTypeTag  = "xtcp"
-	httpServiceTypeTag  = "http"
-	httpsServiceTypeTag = "https"
-)
-
 var cfg *ini.File
-
-// ServiceBasicConf is a service configure struct
-type ServiceBasicConf struct {
-	Name string
-	Type string
-}
 
 // LoadConfFromFile load config from conf file
 func LoadConfFromFile(filePath string) (err error) {
@@ -54,20 +40,25 @@ func AddFrpServiceConf(serviceStruct interface{}) error {
 	return nil
 }
 
-// GetAllFrpServiceConfTypeAndName return all service config
-// FIXME:
-func GetAllFrpServiceConfTypeAndName() (serviceBasicConfs []*ServiceBasicConf) {
+// GetAllFrpServiceConfsTypeAndName return all service config
+func GetAllFrpServiceConfsTypeAndName() (serviceBasicConfs []*model.FrpBasicService) {
 	for _, sec := range cfg.Sections() {
 		if sec.Name() == commonSectionName {
 			continue
 		}
 		serviceBasicConfs = append(serviceBasicConfs,
-			&ServiceBasicConf{
+			&model.FrpBasicService{
 				Name: sec.Name(),
 				Type: sec.Key(serviceTypeTag).String(),
 			})
 	}
 	return serviceBasicConfs
+}
+
+// GetFrpServiceConfsByTag return specified config
+func GetFrpServiceConfsByTag(
+	ServiceName string, serviceStruct interface{}) error {
+	return cfg.Section(ServiceName).MapTo(serviceStruct)
 }
 
 // GetFrpServiceConfByName return specified config
@@ -77,22 +68,21 @@ func GetFrpServiceConfByName(
 }
 
 // DeleteFrpServiceConf delete service config by name
-func DeleteFrpServiceConf(secName string) error {
-	cfg.DeleteSection(secName)
+func DeleteFrpServiceConf(serviceName string) error {
+	cfg.DeleteSection(serviceName)
 	return nil
 }
 
 // UpdateFrpServiceConf delete service config by name
-func UpdateFrpServiceConf(service interface{}) error {
-	reflectType := reflect.TypeOf(service)
-	serviceName := reflectType.Field(0).Name
+func UpdateFrpServiceConf(serviceName string, serviceStruct interface{}) error {
+	reflectType := reflect.TypeOf(serviceStruct)
 	sec, err := cfg.GetSection(serviceName)
 	if err != nil {
 		return err
 	}
 	for i := 1; i < reflectType.NumField(); i++ {
-		key := reflect.TypeOf(service).Field(i).Tag.Get(cfgStructTag)
-		val := reflect.ValueOf(service).Field(i).String()
+		key := reflect.TypeOf(serviceStruct).Field(i).Tag.Get(cfgStructTag)
+		val := reflect.ValueOf(serviceStruct).Field(i).String()
 		sec.NewKey(key, val)
 	}
 	return nil

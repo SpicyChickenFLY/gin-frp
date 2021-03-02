@@ -1,30 +1,32 @@
 package service
 
 import (
-	"github.com/SpicyChickenFLY/auto-mycnf/app"
+	"github.com/SpicyChickenFLY/gin-frp/app"
 	"github.com/SpicyChickenFLY/gin-frp/model"
 )
+
+// GetAllFrpService get all  service
+func GetAllFrpService() []*model.FrpBasicService {
+	return app.GetAllFrpServiceConfsTypeAndName()
+}
 
 // ===================== TCP =====================
 
 // CreateFrpTCPService create new TCP service
-func CreateFrpTCPService(frpTCPServ model.FrpTCPService) error {
-	return app.AddFrpServiceConf(frpTCPServ)
-}
-
-// GetAllFrpTCPService get all TCP service
-func GetAllFrpTCPService() []*model.FrpTCPService {
-
+func CreateFrpTCPService(frpTCPServiceData *model.FrpTCPService) error {
+	return app.AddFrpServiceConf(frpTCPServiceData)
 }
 
 // GetFrpTCPServiceByName get TCP service by name
-func GetFrpTCPServiceByName(serviceName string) {
-
+func GetFrpTCPServiceByName(
+	serviceName string, result *model.FrpTCPService) error {
+	return app.GetFrpServiceConfByName(serviceName, result)
 }
 
 //UpdateFrpTCPService update TCP service
-func UpdateFrpTCPService(frpTCPServ model.FrpTCPService) {
-
+func UpdateFrpTCPService(
+	serviceName string, frpTCPServiceData model.FrpTCPService) error {
+	return app.UpdateFrpServiceConf(serviceName, frpTCPServiceData)
 }
 
 // DeleteFrpTCPService delete TCP service
@@ -33,11 +35,6 @@ func DeleteFrpTCPService(serviceName string) {
 }
 
 // ===================== File =====================
-
-// GetAllFrpFileService get all File service
-func GetAllFrpFileService() []*model.FrpFileService {
-
-}
 
 // GetFrpFileServiceByName get File service by name
 func GetFrpFileServiceByName(serviceName string) {
