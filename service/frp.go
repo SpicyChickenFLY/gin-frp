@@ -30,8 +30,8 @@ func UpdateFrpTCPService(
 }
 
 // DeleteFrpTCPService delete TCP service
-func DeleteFrpTCPService(serviceName string) {
-
+func DeleteFrpTCPService(serviceName string) error {
+	return app.DeleteFrpServiceConf(serviceName)
 }
 
 // ===================== File =====================

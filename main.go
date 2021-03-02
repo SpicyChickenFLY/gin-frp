@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/SpicyChickenFLY/gin-frp/route"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -17,7 +18,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: router,
+		Handler: route.InitRouter,
 	}
 
 	go func() {

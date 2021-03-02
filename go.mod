@@ -1,4 +1,4 @@
-module github.com/SpicyChickenFLY/auto-mycnf
+module github.com/SpicyChickenFLY/gin-frp
 
 go 1.15
 

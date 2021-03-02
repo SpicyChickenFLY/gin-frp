@@ -15,7 +15,7 @@ type ServerInfo struct {
 // FrpBasicService is a service configure struct
 type FrpBasicService struct {
 	Name string `json:"ServiceName"`
-	Type string `ini:"type" json:"ServiceType"`
+	Type string `json:"ServiceType"`
 }
 
 // FrpTCPService is a tcp type frp service struct

@@ -3,7 +3,7 @@ package app
 import (
 	"reflect"
 
-	"github.com/SpicyChickenFLY/auto-mycnf/model"
+	"github.com/SpicyChickenFLY/gin-frp/model"
 	"gopkg.in/ini.v1"
 )
 
@@ -69,6 +69,9 @@ func GetFrpServiceConfByName(
 
 // DeleteFrpServiceConf delete service config by name
 func DeleteFrpServiceConf(serviceName string) error {
+	if _, err := cfg.GetSection(serviceName); err != nil {
+		return err
+	}
 	cfg.DeleteSection(serviceName)
 	return nil
 }
