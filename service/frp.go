@@ -1,74 +1,92 @@
-package service
+package app
 
 import (
-	"github.com/SpicyChickenFLY/gin-frp/app"
+	"reflect"
+
 	"github.com/SpicyChickenFLY/gin-frp/model"
+	"gopkg.in/ini.v1"
 )
 
-// GetAllFrpService get all  service
-func GetAllFrpService() []*model.FrpBasicService {
-	return app.GetAllFrpServiceConfsTypeAndName()
+const (
+	commonSectionName = "common"
+	serviceTypeTag    = "type"
+	cfgStructTag      = "ini"
+)
+
+var cfg *ini.File
+
+// LoadConfFromFile load config from conf file
+func LoadConfFromFile(filePath string) (err error) {
+	cfg, err = ini.Load(filePath)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-// ===================== TCP =====================
-
-// CreateFrpTCPService create new TCP service
-func CreateFrpTCPService(frpTCPServiceData *model.FrpTCPService) error {
-	return app.AddFrpServiceConf(frpTCPServiceData)
+// AddFrpServiceConf add service config
+func AddFrpServiceConf(serviceStruct interface{}) error {
+	reflectType := reflect.TypeOf(serviceStruct)
+	serviceName := reflectType.Field(0).Name
+	sec, err := cfg.NewSection(serviceName)
+	if err != nil {
+		return err
+	}
+	for i := 1; i < reflectType.NumField(); i++ {
+		key := reflect.TypeOf(serviceStruct).Field(i).Tag.Get(cfgStructTag)
+		val := reflect.ValueOf(serviceStruct).Field(i).String()
+		sec.NewKey(key, val)
+	}
+	return nil
 }
 
-// GetFrpTCPServiceByName get TCP service by name
-func GetFrpTCPServiceByName(
-	serviceName string, result *model.FrpTCPService) error {
-	return app.GetFrpServiceConfByName(serviceName, result)
+// GetAllFrpServiceConfsTypeAndName return all service config
+func GetAllFrpServiceConfsTypeAndName() (serviceBasicConfs []*model.FrpBasicService) {
+	for _, sec := range cfg.Sections() {
+		if sec.Name() == commonSectionName {
+			continue
+		}
+		serviceBasicConfs = append(serviceBasicConfs,
+			&model.FrpBasicService{
+				Name: sec.Name(),
+				Type: sec.Key(serviceTypeTag).String(),
+			})
+	}
+	return serviceBasicConfs
 }
 
-//UpdateFrpTCPService update TCP service
-func UpdateFrpTCPService(
-	serviceName string, frpTCPServiceData model.FrpTCPService) error {
-	return app.UpdateFrpServiceConf(serviceName, frpTCPServiceData)
+// GetFrpServiceConfsByTag return specified config
+func GetFrpServiceConfsByTag(
+	ServiceName string, serviceStruct interface{}) error {
+	return cfg.Section(ServiceName).MapTo(serviceStruct)
 }
 
-// DeleteFrpTCPService delete TCP service
-func DeleteFrpTCPService(serviceName string) error {
-	return app.DeleteFrpServiceConf(serviceName)
+// GetFrpServiceConfByName return specified config
+func GetFrpServiceConfByName(
+	ServiceName string, serviceStruct interface{}) error {
+	return cfg.Section(ServiceName).MapTo(serviceStruct)
 }
 
-// ===================== File =====================
-
-// GetFrpFileServiceByName get File service by name
-func GetFrpFileServiceByName(serviceName string) {
-
+// DeleteFrpServiceConf delete service config by name
+func DeleteFrpServiceConf(serviceName string) error {
+	if _, err := cfg.GetSection(serviceName); err != nil {
+		return err
+	}
+	cfg.DeleteSection(serviceName)
+	return nil
 }
 
-//UpdateFrpFileService update File service
-func UpdateFrpFileService(frpFileServ model.FrpFileService) {
-
-}
-
-// DeleteFrpFileService delete File service
-func DeleteFrpFileService(serviceName string) {
-
-}
-
-// ===================== HTTPS =====================
-
-// GetAllFrpHTTPSService get all HTTPS service
-func GetAllFrpHTTPSService() []*model.FrpHTTPSService {
-
-}
-
-// GetFrpHTTPSServiceByName get HTTPS service by name
-func GetFrpHTTPSServiceByName(serviceName string) {
-
-}
-
-//UpdateFrpHTTPSService update HTTPS service
-func UpdateFrpHTTPSService(frpHTTPSServ model.FrpHTTPSService) {
-
-}
-
-// DeleteFrpHTTPSService delete HTTPS service
-func DeleteFrpHTTPSService(serviceName string) {
-
+// UpdateFrpServiceConf delete service config by name
+func UpdateFrpServiceConf(serviceName string, serviceStruct interface{}) error {
+	reflectType := reflect.TypeOf(serviceStruct)
+	sec, err := cfg.GetSection(serviceName)
+	if err != nil {
+		return err
+	}
+	for i := 1; i < reflectType.NumField(); i++ {
+		key := reflect.TypeOf(serviceStruct).Field(i).Tag.Get(cfgStructTag)
+		val := reflect.ValueOf(serviceStruct).Field(i).String()
+		sec.NewKey(key, val)
+	}
+	return nil
 }

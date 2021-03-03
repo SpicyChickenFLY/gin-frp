@@ -18,8 +18,8 @@ type FrpBasicService struct {
 	Type string `json:"ServiceType"`
 }
 
-// FrpTCPService is a tcp type frp service struct
-type FrpTCPService struct {
+// FrpTCPUDPService is a TCP/UDP type frp service struct
+type FrpTCPUDPService struct {
 	ServiceName string `json:"ServiceName"`
 	ServiceType string `ini:"type" json:"ServiceType"`
 	LocalIP     string `ini:"local_ip" json:"LocalIP"`
@@ -27,8 +27,8 @@ type FrpTCPService struct {
 	SecretKey   string `ini:"sk" json:"SecretKey"`
 }
 
-// NewFrpTCPService initialize new FrpTCPService struct
-func NewFrpTCPService(
+// NewFrpTCPUDPService initialize new FrpTCPUDPService struct
+func NewFrpTCPUDPService(
 	name, serviceType string,
 	localIP string, localPort int, secretKey string) *FrpTCPService {
 	return &FrpTCPService{

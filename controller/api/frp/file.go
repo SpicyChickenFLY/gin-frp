@@ -8,42 +8,42 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CreateFrpTCPService create new TCP service
-func CreateFrpTCPService(c *gin.Context) {
-	frpTCPServiceData := &model.FrpTCPUDPService{}
-	if err := c.BindJSON(frpTCPServiceData); err != nil {
+// CreateFrpFileService create new File service
+func CreateFrpFileService(c *gin.Context) {
+	frpFileServiceData := &model.FrpFileService{}
+	if err := c.BindJSON(frpFileServiceData); err != nil {
 		c.JSON(http.StatusNotAcceptable, gin.H{})
 	}
-	if err := service.AddFrpServiceConf(frpTCPServiceData); err != nil {
+	if err := service.AddFrpServiceConf(frpFileServiceData); err != nil {
 		c.JSON(http.StatusNotAcceptable, gin.H{})
 	}
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// GetFrpTCPService get TCP service by name
-func GetFrpTCPService(c *gin.Context) {
+// GetFrpFileService get File service by name
+func GetFrpFileService(c *gin.Context) {
 	serviceName := c.PostForm("ServiceName")
-	result := &model.FrpTCPUDPService{}
+	result := &model.FrpFileService{}
 	if err := service.GetFrpServiceConfByName(serviceName, result); err != nil {
 		c.JSON(http.StatusNotAcceptable, gin.H{})
 	}
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// UpdateFrpTCPService update TCP service
-func UpdateFrpTCPService(c *gin.Context) {
-	frpTCPServiceData := &model.FrpTCPUDPService{}
-	if err := c.BindJSON(frpTCPServiceData); err != nil {
+// UpdateFrpFileService update File service
+func UpdateFrpFileService(c *gin.Context) {
+	frpFileServiceData := &model.FrpFileService{}
+	if err := c.BindJSON(frpFileServiceData); err != nil {
 		c.JSON(http.StatusNotAcceptable, gin.H{})
 	}
-	if err := service.DeleteFrpServiceConf(frpTCPServiceData.ServiceName); err != nil {
+	if err := service.DeleteFrpServiceConf(frpFileServiceData.ServiceName); err != nil {
 		c.JSON(http.StatusNotAcceptable, gin.H{})
 	}
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// DeleteFrpTCPService delete TCP service
-func DeleteFrpTCPService(c *gin.Context) {
+// DeleteFrpFileService delete File service
+func DeleteFrpFileService(c *gin.Context) {
 	serviceName := c.PostForm("ServiceName")
 	if err := service.DeleteFrpServiceConf(serviceName); err != nil {
 		c.JSON(http.StatusNotAcceptable, gin.H{})
