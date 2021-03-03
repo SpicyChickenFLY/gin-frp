@@ -18,26 +18,21 @@ type FrpBasicService struct {
 	Type string `json:"ServiceType"`
 }
 
-// FrpTCPUDPService is a TCP/UDP type frp service struct
-type FrpTCPUDPService struct {
+// FrpTransportService is a TCP/UDP type frp service struct
+type FrpTransportService struct {
+	ServiceName string `json:"ServiceName"`
+	ServiceType string `ini:"type" json:"ServiceType"`
+	LocalIP     string `ini:"local_ip" json:"LocalIP"`
+	LocalPort   int    `ini:"local_port" json:"LocalPort"`
+}
+
+// FrpSecureTransportService is a STCP/SUDP/XTCP type frp service struct
+type FrpSecureTransportService struct {
 	ServiceName string `json:"ServiceName"`
 	ServiceType string `ini:"type" json:"ServiceType"`
 	LocalIP     string `ini:"local_ip" json:"LocalIP"`
 	LocalPort   int    `ini:"local_port" json:"LocalPort"`
 	SecretKey   string `ini:"sk" json:"SecretKey"`
-}
-
-// NewFrpTCPUDPService initialize new FrpTCPUDPService struct
-func NewFrpTCPUDPService(
-	name, serviceType string,
-	localIP string, localPort int, secretKey string) *FrpTCPService {
-	return &FrpTCPService{
-		ServiceName: name,
-		ServiceType: serviceType,
-		LocalIP:     localIP,
-		LocalPort:   localPort,
-		SecretKey:   secretKey,
-	}
 }
 
 // FrpFileService is a file type frp service struct
@@ -52,23 +47,6 @@ type FrpFileService struct {
 	RemotePort   int    `ini:"remote_port"`
 }
 
-// NewFrpFileService initialize new FrpFileService struct
-func NewFrpFileService(
-	serviceName, serviceType string,
-	pluginPath, pluginPrefix, pluginUser, pluginPwd string,
-	remotePort int) *FrpFileService {
-	return &FrpFileService{
-		ServiceName:  serviceName,
-		ServiceType:  serviceType,
-		PluginName:   frpFilePluginName,
-		LocalPath:    pluginPath,
-		StripPrefix:  pluginPrefix,
-		HTTPUser:     pluginUser,
-		HTTPPassword: pluginPwd,
-		RemotePort:   remotePort,
-	}
-}
-
 // FrpHTTPSService is a https type frp service struct
 type FrpHTTPSService struct {
 	ServiceName       string
@@ -79,22 +57,4 @@ type FrpHTTPSService struct {
 	KeyPath           string `ini:"plugin_key_path"`
 	HostHeaderRewrite string `ini:"plugin_host_header_rewrite"`
 	HeaderXFromWhere  string `ini:"plugin_header_X-From-Where"`
-}
-
-// NewFrpHTTPSService initialize new FrpHTTPSService struct
-func NewFrpHTTPSService(
-	serviceName, serviceType string,
-	pluginAddr, pluginCrt, pluginKey,
-	pluginRewrite, pluginWhere string,
-	remotePort int) *FrpHTTPSService {
-	return &FrpHTTPSService{
-		ServiceName:       serviceName,
-		ServiceType:       serviceType,
-		PluginName:        frpHTTPSPluginName,
-		LocalAddress:      pluginAddr,
-		CertificatePath:   pluginCrt,
-		KeyPath:           pluginKey,
-		HostHeaderRewrite: pluginRewrite,
-		HeaderXFromWhere:  pluginWhere,
-	}
 }

@@ -1,7 +1,7 @@
 package route
 
 import (
-	"github.com/SpicyChickenFLY/gin-frp/controller/api"
+	frpApi "github.com/SpicyChickenFLY/gin-frp/controller/api/frp"
 	"github.com/SpicyChickenFLY/gin-frp/pkgs/middleware"
 	"github.com/gin-gonic/gin"
 )
@@ -24,41 +24,34 @@ func InitRouter() *gin.Engine {
 	// Group: Todo List
 	groupFrp := router.Group("/frp")
 	{
-		groupTCPService := groupFrp.Group("/tcp")
+		groupTransportService := groupFrp.Group("/transport")
 		{
-			groupTCPService.GET(":name", api.GetFrpTCPService)
-			groupTCPService.POST("", api.CreateFrpTCPService)
-			groupTCPService.PUT(":name", api.UpdateFrpTCPService)
-			groupTCPService.DELETE(":name", api.DeleteFrpTCPService)
+			groupTransportService.GET(":name", frpApi.GetFrpTransportService)
+			groupTransportService.POST("", frpApi.CreateFrpTransportService)
+			groupTransportService.PUT(":name", frpApi.UpdateFrpTransportService)
+			groupTransportService.DELETE(":name", frpApi.DeleteFrpTransportService)
 		}
-		groupUDPService := groupFrp.Group("/udp")
+		groupSecureTransportService := groupFrp.Group("/secure-transport")
 		{
-			groupUDPService.GET(":name", api.GetFrpUDPService)
-			groupUDPService.POST("", api.CreateFrpUDPService)
-			groupUDPService.PUT(":name", api.UpdateFrpUDPService)
-			groupUDPService.DELETE(":name", api.DeleteFrpUDPService)
+			groupSecureTransportService.GET(":name", frpApi.GetFrpSecureTransportService)
+			groupSecureTransportService.POST("", frpApi.CreateFrpsecureTransportService)
+			groupSecureTransportService.PUT(":name", frpApi.UpdateFrpsecureTransportService)
+			groupSecureTransportService.DELETE(":name", frpApi.DeleteFrpsecureTransportService)
 		}
 		groupFileService := groupFrp.Group("/file")
 		{
-			groupFileService.GET(":name", api.GetFrpFileService)
-			groupFileService.POST("", api.CreateFrpFileService)
-			groupFileService.PUT(":name", api.UpdateFrpFileService)
-			groupFileService.DELETE(":name", api.DeleteFrpFileService)
+			groupFileService.GET(":name", frpApi.GetFrpFileService)
+			groupFileService.POST("", frpApi.CreateFrpFileService)
+			groupFileService.PUT(":name", frpApi.UpdateFrpFileService)
+			groupFileService.DELETE(":name", frpApi.DeleteFrpFileService)
 		}
-		groupHTTPService := groupFrp.Group("/http")
-		{
-			groupHTTPService.GET(":name", api.GetFrpHTTPService)
-			groupHTTPService.POST("", api.CreateFrpHTTPService)
-			groupHTTPService.PUT(":name", api.UpdateFrpHTTPService)
-			groupHTTPService.DELETE(":name", api.DeleteFrpHTTPService)
-		}
-		groupHTTPSService := groupFrp.Group("/https")
-		{
-			groupHTTPSService.GET(":name", api.GetFrpHTTPSService)
-			groupHTTPSService.POST("", api.CreateFrpHTTPSService)
-			groupHTTPSService.PUT(":name", api.UpdateFrpHTTPSService)
-			groupHTTPSService.DELETE(":name", api.DeleteFrpHTTPSService)
-		}
+		// groupHTTPService := groupFrp.Group("/web")
+		// {
+		// 	groupHTTPService.GET(":name", frpApi.GetFrpHTTPService)
+		// 	groupHTTPService.POST("", frpApi.CreateFrpHTTPService)
+		// 	groupHTTPService.PUT(":name", frpApi.UpdateFrpHTTPService)
+		// 	groupHTTPService.DELETE(":name", frpApi.DeleteFrpHTTPService)
+		// }
 	}
 
 	return router
