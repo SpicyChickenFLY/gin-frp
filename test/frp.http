@@ -1,0 +1,27 @@
+@baseURL = 127.0.0.1:6090
+
+### =============== transport ===================
+
+### get all environments
+GET http://{{baseURL}}/api/frp/transport
+Accept: application/json
+
+### get environment by id
+GET http://{{baseURL}}/api/frp/transport
+Accept: application/json
+
+### add new environment
+POST http://{{baseURL}}/api/frp/transport
+Content-Type: application/json
+
+{"env_name": "test"}
+
+### update environment by id
+POST http://{{baseURL}}/api/frp/transport
+Content-Type: application/json
+
+{"env_name": "test123", "del_flag": 1}
+
+### =============== secure transport ===================
+
+

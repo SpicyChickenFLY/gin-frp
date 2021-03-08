@@ -18,7 +18,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: route.InitRouter,
+		Handler: route.InitRouter(),
 	}
 
 	go func() {
